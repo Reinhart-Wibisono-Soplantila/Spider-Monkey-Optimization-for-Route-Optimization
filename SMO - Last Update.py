@@ -9,6 +9,7 @@ import time
 
 start = time.time()
 df_location = pd.read_excel("DistanceMatriks.xlsx", index_col=0)
+# df_location = pd.read_excel("tes1 - Copy.xlsx", index_col=0)
 distance_df = pd.DataFrame(df_location)
 # pd.set_option('display.max_rows', None)
 # pd.set_option('display.max_columns', None)
@@ -26,12 +27,12 @@ max_runs = 1
 try:
     while(run <= max_runs):
         SM = []                                                                     # The list that stores all the spider monkeys
-        nSM = 5                                                                  # Number of spider monkeys
+        nSM = 150                                                                 # Number of spider monkeys
         number_of_groups = 1                                                        # Current Number of groups
         MG = 10                                                                     # Maximum number of groups
         pr = 0.2                                                                    # Perturbation rate
         LLL = 10                                                                 # Local Leader Limit
-        GLL = 10                                                                  # Global Leader Limit
+        GLL = 10                                                                 # Global Leader Limit
         LLLc = {0:0}                                                                 # Local Leader Limit Count
         GLLc = 0                                                                    # Global Leader Limit Count
         LL = []                                                                     # List that stores the local leaders of all groups
@@ -88,11 +89,12 @@ try:
         def Cal_BasicSS(SS):                                                #performs Equation 7 operation and returns Basic SS list
             size = len(SS)
             i = 0
-
+            # print(SS)
             while(i!=size):
                 if (SS[i][1],SS[i][0]) in SS[i:]:
                     SS.remove((SS[i][1],SS[i][0]))
                     SS.remove(SS[i])
+                    # print(SS)
                     size-=2
                 else:
                     i+=1
@@ -119,40 +121,40 @@ try:
 
 
         iteration_counter = 1
-        max_iter = 200
-        TARGET=100000000000
-        TARGET_Counter = 0
+        max_iter = 100
 
         LL = []
         for k in range(len(SM)):
+            print('k = ', k)
             LLLc[k] = 0
             max_fit = 1000000000
             max_fit_index = 0
             for i in range(len(SM[k])):
+                # print('i = ', i)
                 if fitness(SM[k][i]) < max_fit:
                     max_fit = fitness(SM[k][i])
                     max_fit_index = i
-                    print(f'max_fit ={max_fit}')
-                    print(f'max_fit_index ={max_fit_index } ')
+                    # print(f'max_fit ={max_fit}')
+                    # print(f'max_fit_index ={max_fit_index } ')
             LL.append(max_fit_index)
         GL[1] = LL[0]
 
-        print(f'LL[0] = {LL[0]}')
-        print(f'GL[1] = {GL[1]}')
+        # print(f'LL[0] = {LL[0]}')
+        # print(f'GL[1] = {GL[1]}')
 
         while iteration_counter <= max_iter:
-            print('*'*20)
+            # print('*'*20)
             print(f"iteration: {iteration_counter}")
             """
             Algorithm 2.1 Starts
             """
-            print(f"best LL = {LL}")
+            # print(f"best LL = {LL}")
             for k in range(len(SM)):  # len SM = 1
-                print(f"k={k}")
-                print(f'SM = {len(SM)}')
-                print(f'SMk= {len(SM[k])}')
-                print(f'LLk = {len([LL[k]])}')
-                print(f'SMKLLk = {len(SM[k][LL[k]])}')
+                # print(f"k={k}")
+                # print(f'SM = {len(SM)}')
+                # print(f'SMk= {len(SM[k])}')
+                # print(f'LLk = {len([LL[k]])}')
+                # print(f'SMKLLk = {len(SM[k][LL[k]])}')
                 for i in range(len(SM[k])):    # len SM[k][i] = 100 (i = 0, 1, 2, 3, ...)
                     u = random.uniform(0,1)
                     if u >= pr:
@@ -197,8 +199,8 @@ try:
             best_LL_group = GL[0]
             best_LL_index = GL[1]
             best_LL_fitness = fitness(SM[GL[0]][GL[1]])
-            print(f"best LL = {LL}")
-            print(f"best LL fitness = {best_LL_fitness}")
+            # print(f"best LL = {LL}")
+            # print(f"best LL fitness = {best_LL_fitness}")
             for k in range(len(SM)):
                 LLk_fitness = fitness(SM[k][LL[k]])
                 current_LL_maximum = LLk_fitness
@@ -213,44 +215,44 @@ try:
                     # else:
                         # print(f"same Local Leader, i-{i} = {fit}-{current_LL_maximum}, group- {k}, idx-{new_LL_index}")
                 
-                print(f"Before Checking : LLLc[",k,"] = {LLLc[k]}")
+                # print(f"Before Checking : LLLc[k] = {LLLc[k]}")
                 
-                print(f"After Checking : LLLc[",k,"] = {LLLc[k]}")
+                # print(f"After Checking : LLLc[k] = {LLLc[k]}")
                 if new_LL_index == old_LL_index:
                     LLLc[k] += 1
-                    print(f"LLLc[k] = {LLLc[k]}")
+                    # print(f"LLLc[k] = {LLLc[k]}")
                 else:
                     LLLc[k] = 0
                     LL[k] = new_LL_index
                     LLk_fitness = current_LL_maximum
-                    print(f"LLLc[k] = {LLLc[k]}")
+                    # print(f"LLLc[k] = {LLLc[k]}")
 
                 if LLk_fitness < best_LL_fitness:
                     best_LL_group = k
                     best_LL_index = LL[k]
                     best_LL_fitness = LLk_fitness
 
-                    print(f"best LL = {best_LL_index}")
-                    print(f"best_LL_fitness = {best_LL_fitness}")
+                    # print(f"best LL = {best_LL_index}")
+                    # print(f"best_LL_fitness = {best_LL_fitness}")
 
             if best_LL_group != GL[0] or best_LL_index != GL[1]:
                     GL[0] = best_LL_group
                     GL[1] = best_LL_index
-                    print(f"Best Group = {GL[0]}")
-                    print(f"Best SM in Group (GL) = {GL[1]}")
+                    # print(f"Best Group = {GL[0]}")
+                    # print(f"Best SM in Group (GL) = {GL[1]}")
                     
-                    print(f"Best Fitness in Group (GL) = {fitness(SM[GL[0]][GL[1]])}")
+                    # print(f"Best Fitness in Group (GL) = {fitness(SM[GL[0]][GL[1]])}")
                     # print(f"SM[GL[0]][GL[1]] = {SM[GL[0]][GL[1]]}")
                 
-                    print(f"GLLc - atas = {GLLc}")
-                    print()
+                    # print(f"GLLc - atas = {GLLc}")
+                    # print()
                     GLLc = 0
             else:
-                print(f"Best Group = {GL[0]}")
-                print(f"Best SM in Group (GL) = {GL[1]}")
+                # print(f"Best Group = {GL[0]}")
+                # print(f"Best SM in Group (GL) = {GL[1]}")
                 
                 # print(f"SM[GL[0]][GL[1]] = {SM[GL[0]][GL[1]]}")
-                print(f"GLLc - tengah = {GLLc}")
+                # print(f"GLLc - tengah = {GLLc}")
                 GLLc += 1
 
             """
@@ -263,7 +265,7 @@ try:
                 #   print(f"LLLc = {LLLc}")
                 if LLLc[k] > LLL:
 
-                    print('LLLc - '*5)
+                    # print('LLLc - '*5)
                     LLLc[k] = 0
                     #   print('LLL reach LLC')
                     for i in range(len(SM[k])):
@@ -288,13 +290,13 @@ try:
                             # print(f"SM[k][i] = {SM[k][i]}")
 
 
-            print(f"GLLc - bawah = {GLLc}")
-            print(f"number_of_groups = {number_of_groups}")
+            # print(f"GLLc - bawah = {GLLc}")
+            # print(f"number_of_groups = {number_of_groups}")
             if GLLc > GLL:
-                print('GLLc - '*5)
+                # print('GLLc - '*5)
                 GLLc = 0
 
-                if number_of_groups  < MG:
+                if number_of_groups  <= MG:
                     lis = []
                     for k in range(len(SM)):
                         for i in range(len(SM[k])):
@@ -327,115 +329,101 @@ try:
                     LLLc[k] = 0
                     max_fit = 10000000000000
                     max_fit_index = 0
-                    print('**********')
-                    print(f'max_fit_index = {max_fit_index}')
-                    print(f'max_fit = {max_fit}')
-                    print('####################')
-                    print(f"k={k}")
-                    print(len(SM))
-                    print(len(SM[k]))
-                    print('########################')
+                    # print('**********')
+                    # print(f'max_fit_index = {max_fit_index}')
+                    # print(f'max_fit = {max_fit}')
+                    # print('####################')
+                    # print(f"k={k}")
+                    # print(len(SM))
+                    # print(len(SM[k]))
+                    # print('########################')
                     
                     for i in range(len(SM[k])):
                         if fitness(SM[k][i]) < max_fit:
-                            print()
-                            print('making new LL')
+                            # print()
+                            # print('making new LL')
                             max_fit = fitness(SM[k][i])
                             max_fit_index = i
-                            print(f'max_fit_index = {max_fit_index}')
-                            print(f'max_fit = {max_fit}')
+                            # print(f'max_fit_index = {max_fit_index}')
+                            # print(f'max_fit = {max_fit}')
                     LL.append(max_fit_index)
-                print(LL)
+                # print(LL)
                 #   print('LLLc')
-                print(f"LLLc = {LLLc}")
-                print()
+                # print(f"LLLc = {LLLc}")
+                # print()
                 GL = [0,0]
                 for k in range(len(SM)):
                     if fitness(SM[k][LL[k]]) < fitness(SM[GL[0]][GL[1]]):
                         GL[0] = k
                         GL[1] = LL[k]
-            print('*'*20)
-            print('')
+            # print('*'*20)
+            # print('')
             iteration_counter += 1
         
-            print(f"Algo 2.3 LL = {LL}")
-            # if(iteration_counter > max_iter):
-            #     if(number_of_groups == 1):
-            #         print('satu group')
-            #         answer_index = GL[1]
-            #         answer_location = SM[GL[0]][GL[1]]
-            #         answer_fitness = fitness(answer_location)
-                    
-            #         print(answer_index)
-            #         print(answer_location)
-            #         print(answer_fitness)
-            #     else:
-            #         print('banyak group')
-            #         total_index = 0
-            #         answer_group = GL[0]
-            #         for k in range(answer_group):
-            #             total_index += len(SM[k])
-            #         answer_index = total_index+GL[1]
-            #         answer_location = SM[GL[0]][GL[1]]
-            #         answer_fitness = fitness(answer_location)
-            #         print(total_index)
-            #         print(answer_index)
-            #         print(answer_fitness)
             
-            if TARGET_Counter > 5:
-                answer_index = GL[1]
-                answer_location = SM[GL[0]][GL[1]]
-                answer_fitness = fitness(answer_location)
-                
-                print(answer_index)
-                # print(answer_location)
-                print(answer_fitness)
-                break
-            else:
-                if TARGET < fitness(SM[GL[0]][GL[1]]):
-                    TARGET_Counter +=1
-                    print('TARGET_Counter', TARGET_Counter)
+            if(iteration_counter > max_iter):
+                if(number_of_groups == 1):
+                    print('satu group')
+                    answer_index = GL[1]
+                    answer_location = SM[GL[0]][GL[1]]
+                    answer_fitness = fitness(answer_location)
+                    
+                    print(answer_index)
+                    # print(answer_location)
+                    print(answer_fitness)
                 else:
-                    print("TARGET SEBELUMNYA",TARGET)
-                    TARGET = fitness(SM[GL[0]][GL[1]])
-                    print('TARGET SEBELUMNYA',TARGET)
-                    TARGET_Counter = 0
-                # count = 5
-                # read= True
-                # if(read == True):
-                #     with open('AnalisisSMO - Final - Final - Iterasi - PR022.json', 'r') as file:
-                #         data_SMO = json.load(file)
-                # else:
-                #     data_SMO = {}
-                # key = f"P-{nSM}, PR-{pr}, GLL-{GLL}, LLL-{LLL} - Count-{count} - I-{max_iter}"
-                # if(key not in data_SMO):
-                #     print('yes')
-                #     data_SMO[key] = {'Test ke-':count,
-                #                     'Population': nSM,
-                #                     'Iteration': max_iter,
-                #                     'Perturbation Rate': pr,
-                #                     'GLL': GLL,
-                #                     'LLL': LLL,
-                #                     'Distance': answer_fitness,
-                #                     'Execution Time': execution_time,
-                #                     'Locations': answer_location}
+                    print('banyak group')
+                    total_index = 0
+                    answer_group = GL[0]
+                    for k in range(answer_group):
+                        total_index += len(SM[k])
+                    answer_index = total_index+GL[1]
+                    answer_location = SM[GL[0]][GL[1]]
+                    answer_fitness = fitness(answer_location)
+                    print(answer_group)
+                    print(total_index)
+                    print(answer_index)
+                    print(answer_fitness)
+                
+                end = time.time()
+                execution_time = end-start  
+                print('execution_time =', execution_time)
                 
                 
-                # # Nama file untuk menyimpan data JSON
-                # nama_file = "AnalisisSMO - Final - Final - Iterasi - PR022.json"
-                # # Menyimpan data ke dalam file JSON
-                # with open(nama_file, 'w') as file:
-                #     json.dump(data_SMO, file)
+                count=6
+                read= True
+                if(read == True):
+                    with open('AnalisisSMO - Populasi - P50.json', 'r') as file:
+                        data_SMO = json.load(file)
+                else:
+                    data_SMO = {}
+                key = f"P-{nSM}, PR-{pr}, GLL-{GLL}, LLL-{LLL} - Count-{count} - I-{max_iter}"
+                if(key not in data_SMO):
+                    print('yes')
+                    data_SMO[key] = {'Test ke-':count,
+                                    'Population': nSM,
+                                    'Iteration': max_iter,
+                                    'Perturbation Rate': pr,
+                                    'GLL': GLL,
+                                    'LLL': LLL,
+                                    'Distance': answer_fitness,
+                                    'Execution Time': execution_time,
+                                    'Locations': answer_location}
+                
+                
+                # Nama file untuk menyimpan data JSON
+                nama_file = "AnalisisSMO - Populasi - P50.json"
+                # Menyimpan data ke dalam file JSON
+                with open(nama_file, 'w') as file:
+                    json.dump(data_SMO, file)
 
-                # print("Data telah disimpan ke dalam file", nama_file)
-                # print(f"Populasi: {nSM}")
-                # print(f"tes: {count}")
-                # print(f"execution_time: {execution_time}")
+                print("Data telah disimpan ke dalam file", nama_file)
+                print(f"Populasi: {nSM}")
+                print(f"tes: {count}")
+                print(f"execution_time: {execution_time}")
                     
                     
         run += 1
-        end = time.time()
-        execution_time = end-start    
         print(f"Best Group = {GL[0]}")
         print(f"Best SM in Group (GL) = {GL[1]}")
     # print(SM[GL[0]][GL[1]])    
